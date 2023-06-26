@@ -1,5 +1,5 @@
 FROM ubuntu:20.04
-MAINTAINER Jan Grewe <jan@faked.org>
+LABEL Jan Grewe <jan@faked.org>
 
 ENV VERSION_TOOLS "8512546"
 
@@ -21,12 +21,20 @@ RUN apt-get -qq update \
       lib32stdc++6 \
       lib32gcc1 \
       lib32ncurses6 \
+      ruby-full \
       lib32z1 \
       unzip \
       locales \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+
+# install FastLane
+COPY fastlane .
+COPY Gemfile.lock .
+COPY Gemfile .
+RUN gem install bundler
+RUN bundle install
 
 RUN rm -f /etc/ssl/certs/java/cacerts; \
     /var/lib/dpkg/info/ca-certificates-java.postinst configure
